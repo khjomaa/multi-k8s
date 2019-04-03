@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - dokcer build -t khjomaa/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run khjomaa/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t khjomaa/multi-client ./client
+  - docker build -t khjomaa/multi-nginx ./nginx
+  - docker build -t khjomaa/multi-server ./server
+  - docker build -t khjomaa/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push khjomaa/multi-client
+  - docker push khjomaa/multi-nginx
+  - docker push khjomaa/multi-server
+  - docker push khjomaa/multi-worker
