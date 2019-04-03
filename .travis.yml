@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - dokcer build -t khjomaa/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t khjomaa/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run khjomaa/react-test npm test -- --coverage
