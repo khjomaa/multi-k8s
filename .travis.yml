@@ -7,3 +7,11 @@ before_install:
   - source $HOME/google-cloud-sdk/path.bash.inc # Apply configuration
   - gcloud components update kubectl # Install and update kubectl inside Travis environment
   - gcloud auth activate-service-account --key-file service-account.json # Grant GCloud SDK, access to our account
+  - gcloud config set project multi-k8s-237913 # Project name from GCloud
+  - gcloud config set compute/zone us-central1-a # Zone from GCloud (Menu => Kubernetes Engine => Clusters => Value of location)
+  - gcloud container clusters get-credentials multi-cluster # From GCloud (Menu => Kubernetes Engine => Clusters => Value of Name)
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t khjomaa/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run khjomaa/react-test npm test -- --coverage
